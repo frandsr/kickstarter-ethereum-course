@@ -3,6 +3,7 @@ import Layout from "../../components/Layout";
 import { Form, Button, Input, Message } from "semantic-ui-react";
 import factory from "../../ethereum/factory";
 import web3 from "../../ethereum/web3";
+import Router from "next/router";
 
 const CampaignNew = () => {
   const [minimumContribution, setMinimumContribution] = useState("");
@@ -19,6 +20,7 @@ const CampaignNew = () => {
         //Metamask en este caso aumaticamente trata de calcular el gas que se va a necesitar
         from: accounts[0],
       });
+      Router.push("/");
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
