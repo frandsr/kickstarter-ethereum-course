@@ -1,18 +1,43 @@
-import Link from "next/link";
 import React, { useState } from "react";
+import Link from "next/link";
 import { Button, Form, Message, Input } from "semantic-ui-react";
 import Layout from "../../../../components/Layout";
 import web3 from "../../../../ethereum/web3";
+import Router from "next/router";
+import { getCampaign } from "../../../../ethereum/campaign";
 
 const RequestNew = ({ address }) => {
-  console.log(address);
   const [value, setValue] = useState("");
   const [description, setDescription] = useState("");
   const [recipient, setRecipient] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage("");
+    setLoading(true);
+    const campaign = getCampaign(address);
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await campaign.methods
+        .createRequest(description, web3.utils.toWei(value), recipient)
+        .send({ from: accounts[0] });
+      Router.push("/campaigns/" + address + "/requests");
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout>
+      <Link href={"/campaigns/" + address + "/requests"}>
+        <a>Back</a>
+      </Link>
       <h3>Create a Request</h3>
-      <Form>
+      <Form onSubmit={onSubmit} error={!!errorMessage}>
         <Form.Field>
           <label>Description</label>
           <Input
@@ -31,16 +56,19 @@ const RequestNew = ({ address }) => {
             onChange={(e) => setRecipient(e.target.value)}
           />
         </Form.Field>
-        <Button primary>Create!</Button>
+        <Message error header="Oops!" content={errorMessage}></Message>
+        <Button primary loading={loading}>
+          Create!
+        </Button>
       </Form>
     </Layout>
   );
 };
 
 RequestNew.getInitialProps = async (context) => {
-  let address = context.query.address;
+  const address = context.query.address;
   return {
-    address,
+    address
   };
 };
 

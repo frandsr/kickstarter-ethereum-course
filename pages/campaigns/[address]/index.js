@@ -79,8 +79,8 @@ const CampaignShow = (props) => {
 };
 
 CampaignShow.getInitialProps = async (context) => {
-  let address = context.query.address;
-  let campaign = getCampaign(address);
+  const address = context.query.address;
+  const campaign = getCampaign(address);
   let summary;
   try {
     summary = await campaign.methods.getSummary().call();
