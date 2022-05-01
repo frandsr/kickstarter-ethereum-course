@@ -28,7 +28,9 @@ const Requests = ({ address, requests, requestCount, approversCount }) => {
       <h3>Requests</h3>
       <Link href={newRequestPath}>
         <a>
-          <Button primary>Add Request</Button>
+          <Button primary floated="right" style={{ marginBottom: "10px" }}>
+            Add Request
+          </Button>
         </a>
       </Link>
       <Table>
@@ -45,6 +47,7 @@ const Requests = ({ address, requests, requestCount, approversCount }) => {
         </Header>
         <Body>{renderRows()}</Body>
       </Table>
+      <div>Found {requestCount} requests.</div>
     </Layout>
   );
 };
@@ -66,7 +69,7 @@ Requests.getInitialProps = async (context) => {
     address,
     requests,
     requestCount,
-    approversCount
+    approversCount,
   };
 };
 
